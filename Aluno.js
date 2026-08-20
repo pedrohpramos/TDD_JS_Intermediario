@@ -18,7 +18,9 @@ class Aluno {
     return parseFloat((soma / this.notas.length).toFixed(2));
   }
 
-
+  getNome(){
+    return this.nome;
+  }
 }
 
 
