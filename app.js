@@ -16,22 +16,22 @@ class App {
 
     async menuCadastrarAluno() {
         const nome = await this.pergunta("Nome do aluno: ");
-        
+
         const turmasPreDefinidas = ["MouraTech Dados", "MouraTech Automação", "MouraTech FullStack"];
         const turmasCadastradas = this.gerenciador.obterTurmasNomes();
-        
+
         // Junta as turmas pré-definidas com outras que já tenham sido cadastradas
         const turmas = [...new Set([...turmasPreDefinidas, ...turmasCadastradas])];
-        
+
         let turma = "";
 
         console.log("\nTurmas disponíveis para cadastro:");
         turmas.forEach((t, i) => console.log(`${i + 1}- ${t}`));
         console.log(`0- Nova turma`);
-        
+
         const opcaoTurma = await this.pergunta("\nDigite o indice da turma (ou 0 para nova): ");
         const indice = parseInt(opcaoTurma.trim()) - 1;
-        
+
         if (indice >= 0 && indice < turmas.length) {
             turma = turmas[indice];
         } else {
@@ -40,11 +40,11 @@ class App {
 
         let notasValidas = false;
         let notas = [];
-        
+
         while (!notasValidas) {
             const notasStr = await this.pergunta("Notas separadas por virgula (min. 3, ex: 7.5,8,9): ");
             notas = notasStr.split(",").map((n) => parseFloat(n.trim()));
-            
+
             if (notas.length >= 3 && notas.every(n => !isNaN(n))) {
                 notasValidas = true;
             } else {
@@ -73,7 +73,7 @@ class App {
 
         const opcaoTurma = await this.pergunta("\nDigite o indice da turma: ");
         const indice = parseInt(opcaoTurma.trim()) - 1;
-        
+
         if (indice >= 0 && indice < turmas.length) {
             this.relatorios.analisarTurma(turmas[indice]);
         } else {
