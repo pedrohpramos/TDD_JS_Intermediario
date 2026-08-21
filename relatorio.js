@@ -1,4 +1,4 @@
-const UI = require('./UI');
+const UI = require('./UI.js');
 
 class Relatorios {
     constructor(gerenciador, mediaMinima = 7.0) {
