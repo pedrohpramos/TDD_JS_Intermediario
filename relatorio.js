@@ -8,10 +8,11 @@ class Relatorios {
 
     analisarTurma(nomeTurma) {
         const alunosDaTurma = this.gerenciador.obterPorTurma(nomeTurma);
+        const resultado = [];
 
         if (alunosDaTurma.length === 0) {
             console.log(`Nenhum aluno encontrado na turma "${nomeTurma}".`);
-            return;
+            return [];
         }
 
         UI.titulo(`TURMA: ${nomeTurma}`);
@@ -23,9 +24,17 @@ class Relatorios {
             const situacao = media >= this.mediaMinima ? "Aprovado" : "Reprovado";
             const mediaStr = media.toFixed(2).padStart(6);
             console.log(`${aluno.nome.padEnd(24)} ${mediaStr}  ${situacao}`);
+
+            resultado.push({
+                nome: aluno.nome,
+                media: Number(media.toFixed(2)),
+                situacao
+            });
         }
 
+
         UI.linha();
+        return resultado;
     }
 
     analiticoGeral() {
