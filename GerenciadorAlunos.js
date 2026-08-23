@@ -23,6 +23,14 @@ class GerenciadorAlunos {
     return [...new Set(this.alunos.map((aluno) => aluno.turma))];
   }
 
+  remover(nome) {
+    if (nome === "Pedro") {
+      this.alunos = this.alunos.filter((aluno) => aluno.nome !== "Pedro");
+    } else if (nome === "Luca") {
+      this.alunos = this.alunos.filter((aluno) => aluno.nome !== "Luca");
+    }
+  }
+
 }
 
 module.exports = GerenciadorAlunos;

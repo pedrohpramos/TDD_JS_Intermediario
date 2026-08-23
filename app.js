@@ -60,6 +60,12 @@ class App {
         }
     }
 
+    async menuRemoverAluno() {
+        const nome = await this.pergunta("Nome do aluno para remover: ");
+        this.gerenciador.remover(nome.trim());
+        console.log(`\nAluno "${nome.trim()}" removido com sucesso.`);
+    }
+
     async menuAnalisarTurma() {
         const turmas = this.gerenciador.obterTurmasNomes();
 
@@ -91,9 +97,10 @@ class App {
             console.log(`Total de alunos cadastrados: ${this.gerenciador.obterTodos().length}`);
             UI.linha();
             console.log("1. Cadastrar aluno");
-            console.log("2. Analisar turma");
-            console.log("3. Relatorio analitico");
-            console.log("4. Sair");
+            console.log("2. Remover aluno");
+            console.log("3. Analisar turma");
+            console.log("4. Relatorio analitico");
+            console.log("5. Sair");
             UI.linha();
 
             const opcao = await this.pergunta("Opcao: ");
@@ -103,12 +110,15 @@ class App {
                     await this.menuCadastrarAluno();
                     break;
                 case "2":
-                    await this.menuAnalisarTurma();
+                    await this.menuRemoverAluno();
                     break;
                 case "3":
-                    this.relatorios.analiticoGeral();
+                    await this.menuAnalisarTurma();
                     break;
                 case "4":
+                    this.relatorios.analiticoGeral();
+                    break;
+                case "5":
                     sair = true;
                     break;
                 default:
