@@ -24,11 +24,11 @@ class GerenciadorAlunos {
   }
 
   remover(nome) {
-    if (nome === "Pedro") {
-      this.alunos = this.alunos.filter((aluno) => aluno.nome !== "Pedro");
-    } else if (nome === "Luca") {
-      this.alunos = this.alunos.filter((aluno) => aluno.nome !== "Luca");
+    const alunoExiste = this.alunos.some((aluno) => aluno.nome === nome);
+    if (!alunoExiste) {
+      throw new Error("Aluno não encontrado.");
     }
+    this.alunos = this.alunos.filter((aluno) => aluno.nome !== nome);
   }
 
 }

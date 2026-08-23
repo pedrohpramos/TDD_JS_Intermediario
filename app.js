@@ -62,8 +62,12 @@ class App {
 
     async menuRemoverAluno() {
         const nome = await this.pergunta("Nome do aluno para remover: ");
-        this.gerenciador.remover(nome.trim());
-        console.log(`\nAluno "${nome.trim()}" removido com sucesso.`);
+        try {
+            this.gerenciador.remover(nome.trim());
+            console.log(`\nAluno "${nome.trim()}" removido com sucesso.`);
+        } catch (err) {
+            console.log(`\nErro: ${err.message}`);
+        }
     }
 
     async menuAnalisarTurma() {
