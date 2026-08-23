@@ -8,10 +8,11 @@ class Relatorios {
 
     analisarTurma(nomeTurma) {
         const alunosDaTurma = this.gerenciador.obterPorTurma(nomeTurma);
+        const resultado = [];
 
         if (alunosDaTurma.length === 0) {
             console.log(`Nenhum aluno encontrado na turma "${nomeTurma}".`);
-            return;
+            return [];
         }
 
         UI.titulo(`TURMA: ${nomeTurma}`);
@@ -23,17 +24,26 @@ class Relatorios {
             const situacao = media >= this.mediaMinima ? "Aprovado" : "Reprovado";
             const mediaStr = media.toFixed(2).padStart(6);
             console.log(`${aluno.nome.padEnd(24)} ${mediaStr}  ${situacao}`);
+
+            resultado.push({
+                nome: aluno.nome,
+                media: Number(media.toFixed(2)),
+                situacao
+            });
         }
 
-        UI.linha();
-    }
 
+        UI.linha();
+        return resultado;
+    }
+    
     analiticoGeral() {
         const todosAlunos = this.gerenciador.obterTodos();
-
+        const turmasResumo = [];
+        
         if (todosAlunos.length === 0) {
             console.log("Nenhum aluno cadastrado ainda.");
-            return;
+            return { melhor: null, pior: null, turmas: turmasResumo };
         }
 
         UI.titulo("RELATÓRIO ANALÍTICO GERAL");
@@ -71,12 +81,33 @@ class Relatorios {
             const aprovados = grupo.filter((aluno) => aluno.getMedia() >= this.mediaMinima).length;
             const reprovados = grupo.length - aprovados;
 
+            turmasResumo.push({
+                nomeTurma,
+                mediaGeral,
+                aprovados,
+                reprovados
+            });
+
             console.log(`${nomeTurma}`);
             console.log(`  Media geral: ${mediaGeral.toFixed(2)}`);
             console.log(`  Aprovados:   ${aprovados}`);
             console.log(`  Reprovados:  ${reprovados}`);
             UI.linha("-", 40);
         }
+
+        return {
+            melhor: {
+                nome: melhor.nome,
+                turma: melhor.turma,
+                media: Number(melhor.getMedia().toFixed(2))
+            },
+            pior: {
+                nome: pior.nome,
+                turma: pior.turma,
+                media: Number(pior.getMedia().toFixed(2))
+            },
+            turmas: turmasResumo
+        };
     }
 }
 
