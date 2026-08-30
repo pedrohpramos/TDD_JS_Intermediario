@@ -2,6 +2,7 @@ const readline = require("readline");
 const GerenciadorAlunos = require("./GerenciadorAlunos");
 const Relatorios = require("./relatorio");
 const UI = require("./UI");
+const { buscarAluno } = require("./apiAlunos");
 
 class App {
     constructor() {
@@ -104,7 +105,8 @@ class App {
             console.log("2. Remover aluno");
             console.log("3. Analisar turma");
             console.log("4. Relatorio analitico");
-            console.log("5. Sair");
+            console.log("5. Buscar aluno por ID (API)");
+            console.log("6. Sair");
             UI.linha();
 
             const opcao = await this.pergunta("Opcao: ");
@@ -123,6 +125,22 @@ class App {
                     this.relatorios.analiticoGeral();
                     break;
                 case "5":
+                    const idStr = await this.pergunta("Digite o ID do aluno: ");
+                    console.log("\nBuscando aluno...");
+                    await buscarAluno(parseInt(idStr))
+                        .then((aluno) => {
+                            UI.titulo("ALUNO ENCONTRADO");
+                            console.log(`  ID:    ${aluno.id}`);
+                            console.log(`  Nome:  ${aluno.nome}`);
+                            console.log(`  Turma: ${aluno.turma}`);
+                            console.log(`  Notas: ${aluno.notas.join(", ")}`);
+                            UI.linha();
+                        })
+                        .catch((err) => {
+                            console.log(`\nErro: ${err.message}`);
+                        });
+                    break;
+                case "6":
                     sair = true;
                     break;
                 default:
