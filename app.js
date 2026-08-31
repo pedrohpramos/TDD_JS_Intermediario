@@ -2,7 +2,7 @@ const readline = require("readline");
 const GerenciadorAlunos = require("./GerenciadorAlunos");
 const Relatorios = require("./relatorio");
 const UI = require("./UI");
-const { buscarAluno } = require("./apiAlunos");
+const { buscarAluno, listarAlunos, adicionarAluno } = require("./apiAlunos");
 
 class App {
     constructor() {
@@ -53,9 +53,30 @@ class App {
             }
         }
 
+        console.log("\nCadastrando aluno...");
         try {
-            const aluno = this.gerenciador.cadastrar(nome.trim(), notas, turma.trim());
-            console.log(`\nAluno "${aluno.nome}" cadastrado com sucesso na turma "${aluno.turma}".`);
+            const novoAluno = await adicionarAluno({ nome: nome.trim(), notas, turma: turma.trim() });
+            // Também registra no gerenciador local para análises e relatórios
+            this.gerenciador.cadastrar(novoAluno.nome, novoAluno.notas, novoAluno.turma);
+            console.log(`\nAluno "${novoAluno.nome}" cadastrado com sucesso (ID: ${novoAluno.id}) na turma "${novoAluno.turma}".`);
+        } catch (err) {
+            console.log(`\nErro: ${err.message}`);
+        }
+    }
+
+    async menuListarAlunos() {
+        console.log("\nBuscando alunos...");
+        try {
+            const alunos = await listarAlunos();
+            if (alunos.length === 0) {
+                console.log("Nenhum aluno encontrado.");
+                return;
+            }
+            UI.titulo("LISTA DE ALUNOS");
+            alunos.forEach((aluno) => {
+                console.log(`  ID: ${aluno.id} | Nome: ${aluno.nome} | Turma: ${aluno.turma} | Notas: ${aluno.notas.join(", ")}`);
+            });
+            UI.linha();
         } catch (err) {
             console.log(`\nErro: ${err.message}`);
         }
@@ -102,11 +123,12 @@ class App {
             console.log(`Total de alunos cadastrados: ${this.gerenciador.obterTodos().length}`);
             UI.linha();
             console.log("1. Cadastrar aluno");
-            console.log("2. Remover aluno");
-            console.log("3. Analisar turma");
-            console.log("4. Relatorio analitico");
-            console.log("5. Buscar aluno por ID (API)");
-            console.log("6. Sair");
+            console.log("2. Listar alunos");
+            console.log("3. Remover aluno");
+            console.log("4. Analisar turma");
+            console.log("5. Relatorio analitico");
+            console.log("6. Buscar aluno por ID");
+            console.log("7. Sair");
             UI.linha();
 
             const opcao = await this.pergunta("Opcao: ");
@@ -116,15 +138,18 @@ class App {
                     await this.menuCadastrarAluno();
                     break;
                 case "2":
-                    await this.menuRemoverAluno();
+                    await this.menuListarAlunos();
                     break;
                 case "3":
-                    await this.menuAnalisarTurma();
+                    await this.menuRemoverAluno();
                     break;
                 case "4":
-                    this.relatorios.analiticoGeral();
+                    await this.menuAnalisarTurma();
                     break;
                 case "5":
+                    this.relatorios.analiticoGeral();
+                    break;
+                case "6":
                     const idStr = await this.pergunta("Digite o ID do aluno: ");
                     console.log("\nBuscando aluno...");
                     await buscarAluno(parseInt(idStr))
@@ -140,7 +165,7 @@ class App {
                             console.log(`\nErro: ${err.message}`);
                         });
                     break;
-                case "6":
+                case "7":
                     sair = true;
                     break;
                 default:
